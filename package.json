@@ -1,25 +1,23 @@
 {
-  "name": "screeps",
-  "version": "1.0.0",
-  "description": "just for fun",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gccio/screeps.git"
-  },
-  "keywords": [
-    "screeps"
-  ],
-  "author": "LIYUNFAN",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/gccio/screeps/issues"
-  },
-  "homepage": "https://github.com/gccio/screeps#readme",
-  "dependencies": {
-    "@types/screeps": "^3.2.3"
-  }
+    "name": "screeps",
+    "version": "1.0.0",
+    "description": "just for fun",
+    "main": "main.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/gccio/screeps.git"
+    },
+    "keywords": [
+        "screeps"
+    ],
+    "author": "LIYUNFAN",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/gccio/screeps/issues"
+    },
+    "homepage": "https://github.com/gccio/screeps#readme",
+    "dependencies": {
+        "@types/lodash": "4.14.172",
+        "@types/screeps": "3.2.3"
+    }
 }

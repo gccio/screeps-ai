@@ -2,7 +2,12 @@
 # yarn lockfile v1
 
 
-"@types/screeps@^3.2.3":
+"@types/lodash@4.14.172":
+  version "4.14.172"
+  resolved "https://registry.nlark.com/@types/lodash/download/@types/lodash-4.14.172.tgz#aad774c28e7bfd7a67de25408e03ee5a8c3d028a"
+  integrity sha1-qtd0wo57/Xpn3iVAjgPuWow9Aoo=
+
+"@types/screeps@3.2.3":
   version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@types/screeps/-/screeps-3.2.3.tgz#85a89ee286f8c35bb404214fb2e21c2eb3025b26"
-  integrity sha512-XJwbYyvGGu+nuxxGzTFv9dDO4+4XK+w7fi6k2l+mIvN2bZ9m0jNJPt3qIB4Z1OUc+lZnM0YYjXkTwqZQCZtvZw==
+  resolved "https://registry.nlark.com/@types/screeps/download/@types/screeps-3.2.3.tgz#85a89ee286f8c35bb404214fb2e21c2eb3025b26"
+  integrity sha1-haie4ob4w1u0BCFPsuIcLrMCWyY=
