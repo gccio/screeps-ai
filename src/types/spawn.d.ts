@@ -1,0 +1,3 @@
+interface StructureSpawn {
+  work(): void
+}
