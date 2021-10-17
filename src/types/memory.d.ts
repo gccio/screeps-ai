@@ -36,4 +36,8 @@ interface CreepMemory {
 interface RoomMemory {
   // spawn的工作队列，value是要生产的creep名字
   spawnList: string[]
+  // structures房间内的建筑位置
+  structures: {
+    string?: RoomPosition[]
+  }
 }
