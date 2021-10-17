@@ -62,12 +62,12 @@ export default class CreepExtension extends Creep {
 
   // transferTo 转移资源到结构
   public transferTo(dst: Structure, RESOURCE: ResourceConstant): ScreepsReturnCode {
-    let err = this.transfer(dst, RESOURCE)
-    if (err === ERR_NOT_IN_RANGE) {
-      let range = (this.memory.role === 'harvester' && dst.structureType === STRUCTURE_CONTAINER) ? 0 : 1
-      this._moveTo(dst, range)
+    let range = (this.memory.role === 'harvester' && dst.structureType === STRUCTURE_CONTAINER) ? 0 : 1
+    if (this.pos.inRangeTo(dst.pos.x, dst.pos.y, range)) {
+      return this.transfer(dst, RESOURCE)
     }
-    return err
+    this._moveTo(dst, range)
+    return ERR_NOT_IN_RANGE
   }
 
   public repairTo(dst: Structure): ScreepsReturnCode {
