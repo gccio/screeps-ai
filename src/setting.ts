@@ -3,7 +3,6 @@ export const defaultCreepMemory: CreepMemory = {
   role: 'harvester',
   ready: false,
   working: false,
-  csid: '',
   producerId: '',
   consumerId: '',
   standguard: false,

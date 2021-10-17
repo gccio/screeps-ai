@@ -12,10 +12,16 @@ export default (args: HarvesterArgs) => {
     prepare: (creep: Creep) => {
       let consumerId = creep.memory.consumerId
       let producerId = args.producerId
-      let consumer: StructureContainer | ConstructionSite | Source = Game.getObjectById<StructureContainer | ConstructionSite>(consumerId)
+      const consumer: StructureContainer | ConstructionSite | Source = Game.getObjectById<StructureContainer | ConstructionSite>(consumerId)
       const producer = Game.getObjectById<Source>(producerId)
 
-      // 未在内存中找到container，尝试在Source周围找
+      // harvester的consumer只能是container
+      if (consumer) {
+        creep._moveTo(consumer, 0)
+        return creep.pos.inRangeTo(consumer.pos, 0)
+      }
+
+      // 未在内存中找到container，尝试在source周围找
       if (!consumer) {
         // 尝试在能源周围找container
         const containers = producer.pos.findInRange<StructureContainer>(FIND_STRUCTURES, 1, {
@@ -24,7 +30,9 @@ export default (args: HarvesterArgs) => {
 
         // 找到了就把 container 当做目标
         if (containers.length > 0) {
-          consumer = containers[0]
+          creep._moveTo(containers[0], 0)
+          args.consumerId = containers[0].id
+          return creep.pos.inRangeTo(consumer.pos, 0)
         }
       }
 
@@ -35,21 +43,17 @@ export default (args: HarvesterArgs) => {
         })
 
         if (constructionSite.length > 0) {
-          consumer = constructionSite[0]
+          creep._moveTo(constructionSite[0])
+          return creep.pos.inRangeTo(consumer.pos, 1)
         }
       }
 
-      // 也没找到工地，那先向着Source走
-      if (!consumer) {
-        consumer = producer
-      }
-      args.consumerId = consumer.id
-
+      // 如果什么都没找到，就先向预定好的source出发
       creep._moveTo(producer)
-
       return creep.pos.inRangeTo(producer.pos, 1)
     },
     produce: (creep: Creep) => {
+      // 如果harvester马上死亡，则丢掉能量，准备去死
       if (creep.ticksToLive < 2) {
         creep.drop(RESOURCE_ENERGY)
         return true
@@ -60,66 +64,55 @@ export default (args: HarvesterArgs) => {
         obj.consume(creep)
         return true
       }
-      const source: Structure | Source = Game.getObjectById(creep.memory.producerId)
+
+      // 有丢掉的资源去捡资源
+      // 没有就采集source
+      const source = Game.getObjectById<Source>(creep.memory.producerId)
       const droppeds = source.pos.findInRange(FIND_DROPPED_RESOURCES, 2)
       if (droppeds.length > 0) {
         creep.pickupFrom(droppeds[0])
-        return false
       } else {
         creep.harvestFrom(source)
       }
-
       return false
     },
     consume: (creep: Creep) => {
+      // 如果harvester中没有能源了，则进行生产采集，并结束消费过程
       if (creep.store[RESOURCE_ENERGY] <= 0) {
         obj.produce(creep)
         return true
       }
+
       const consumerId = creep.memory.consumerId
       let consumer = Game.getObjectById<StructureContainer | Source>(consumerId)
 
       // 找到了container，将能量放进去
       if (consumer instanceof StructureContainer) {
-        return creep.transferTo(consumer, RESOURCE_ENERGY) === OK
+        return !creep.transferTo(consumer, RESOURCE_ENERGY)
       }
 
       // 尝试搜索一下source周围的container
-      const producer: Source = Game.getObjectById(creep.memory.producerId)
+      const producer = Game.getObjectById<Source>(creep.memory.producerId)
       const containers = producer.pos.findInRange(FIND_STRUCTURES, 1, {
         filter: s => s.structureType === STRUCTURE_CONTAINER,
       })
-      if (containers && containers.length) {
+      if (containers.length) {
         creep.memory.consumerId = containers[0].id
-        obj.consume(creep)
-        return true
+        return !creep.transferTo(containers[0], RESOURCE_ENERGY)
       }
 
       // 在没找到container的情况，尝试找一下container的工地
-      let containerSite: ConstructionSite
-      // 如果有csid属性，的话
-      if (creep.memory.csid) {
-        containerSite = Game.getObjectById<ConstructionSite>(creep.memory.csid)
-        if (containerSite) {
-          creep.build(containerSite)
-          return false
-        }
-      }
-
+      let cs: ConstructionSite
       // 没有csid或没有根据csid找到container工地，尝试在source周围找container工地
-      const containerSites = producer.pos.findInRange(FIND_CONSTRUCTION_SITES, 1, {
+      const css = producer.pos.findInRange(FIND_CONSTRUCTION_SITES, 1, {
         filter: s => s.structureType === STRUCTURE_CONTAINER,
       })
-      if (containerSites && containerSites.length) {
-        containerSite = containerSites[0]
-      }
-      if (containerSite) {
+      if (css.length) {
         // 找到了工地
-        creep.memory.csid = containerSite.id
-        creep.build(containerSite)
-      } else {
-        // 没找到工地缓存且周围没有工地，重新创建一个
-        creep.pos.createConstructionSite(STRUCTURE_CONTAINER)
+        const err = creep.build(css[0])
+        if (err === ERR_NOT_IN_RANGE) {
+          creep._moveTo(css[0])
+        }
       }
       return false
     },

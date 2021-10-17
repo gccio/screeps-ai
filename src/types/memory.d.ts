@@ -18,8 +18,6 @@ interface CreepMemory {
   // 工作状态
   // true在工作，false未工作，可能在采集资源路上
   working: boolean
-  // constructionSiteId 建筑工地id
-  csid: string
   // 能源生产者id，一般指source、container、storage之类
   producerId: string
   // 能源消费者id，一般指wall、建筑工地之类

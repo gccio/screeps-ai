@@ -131,7 +131,7 @@ export default class CreepExtension extends Creep {
             return
           }
 
-          const canCross = s.structureType === STRUCTURE_CONTAINER || (s.structureType === STRUCTURE_RAMPART && s.my)
+          const canCross = s.structureType === STRUCTURE_RAMPART && s.my
           if (!canCross) {
             costs.set(x, y, 255)
             return
@@ -258,7 +258,7 @@ export default class CreepExtension extends Creep {
           this.memory._move.path = this.memory._move.path.substr(1);
           return OK
       }
-  }
+    }
 
     const mutualResutl = this.mutualCross(direction)
     // 没找到说明撞墙上了或者前面的 creep 拒绝对穿，重新寻路
